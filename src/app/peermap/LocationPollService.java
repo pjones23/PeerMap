@@ -32,17 +32,21 @@ public class LocationPollService extends Service {
 
 		// Make the directory
 
-		String csvFilePath = Environment.getDataDirectory().toString()	+ "/PeerMap";
-		String csvFileName = "path.csv";
-
-		System.out.println(csvFilePath);
-		System.out.println(getFilesDir().toString());
 		try {
-			File pathFile = new File(getFilesDir(), csvFileName);
-			pathFile.mkdirs();
-			writer = new CSVWriter(new FileWriter(pathFile));
-		} catch (IOException e) {
-			e.printStackTrace();
+			File csvFolder = new File(
+					Environment.getExternalStorageDirectory(), "PeerMap");
+			if (!csvFolder.exists()) {
+				csvFolder.mkdir();
+			}
+			try {
+				File csvFile = new File(csvFolder, "path" + ".csv");
+				csvFile.createNewFile();
+				writer = new CSVWriter(new FileWriter(csvFile));
+			} catch (Exception ex) {
+				System.out.println("ex: " + ex);
+			}
+		} catch (Exception e) {
+			System.out.println("e: " + e);
 		}
 
 		this.gpsLocationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
@@ -77,19 +81,15 @@ public class LocationPollService extends Service {
 		// write the location to the cvs file
 		try {
 			writer.close();
-			
+
 			/*
-			// get the files in the internal storage
-			 
-			File fileList = getFilesDir();
-			if (fileList != null) {
-				File[] filenames = fileList.listFiles();
-				for (File tmpf : filenames) {
-					// Do something with the files
-					System.out.println("file: " + tmpf.getName());
-				}
-			}
-			*/
+			 * // get the files in the internal storage
+			 * 
+			 * File fileList = getFilesDir(); if (fileList != null) { File[]
+			 * filenames = fileList.listFiles(); for (File tmpf : filenames) {
+			 * // Do something with the files System.out.println("file: " +
+			 * tmpf.getName()); } }
+			 */
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -149,7 +149,8 @@ public class LocationPollService extends Service {
 		if (gpsEnabled) {
 			// Get gps location if GPS is enabled
 			this.gpsLocationManager.requestLocationUpdates(
-					LocationManager.GPS_PROVIDER, TEN_SECONDS, TEN_METERS, listener);
+					LocationManager.GPS_PROVIDER, TEN_SECONDS, TEN_METERS,
+					listener);
 		}
 	}
 
