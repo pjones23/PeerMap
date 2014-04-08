@@ -65,7 +65,15 @@ public class MainActivity extends Activity {
 				else{
 					System.out.println("Stop Recording");
 					stopService(locationPollIntent);
+					startWifiDirect();
 				}
+				
+			}
+			
+			private void startWifiDirect(){
+				
+				Intent startP2P = new Intent(getApplicationContext(), WiFiDirectActivity.class);
+				startActivity(startP2P);
 				
 			}
 		});
