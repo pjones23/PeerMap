@@ -7,6 +7,12 @@
     <uses-sdk
         android:minSdkVersion="9"
         android:targetSdkVersion="19" />
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+    <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
+    <uses-permission android:name="android.permission.CHANGE_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
     <uses-permission android:name="android.permission.ACCESS_LOCATION_EXTRA_COMMANDS"/>
@@ -18,6 +24,7 @@
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
+        
         <activity
             android:name="app.peermap.MainActivity"
             android:label="@string/app_name" >
@@ -27,6 +34,22 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        
+        <activity
+            android:name="app.peermap.WiFiDirectActivity"
+            android:label="@string/app_name">
+            <!-- android:label="@string/app_name" android:launchMode="singleTask"> -->
+             <intent-filter>
+                <action
+                    android:name="android.intent.action.VIEW" />
+                <category
+                    android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+            <data android:mimeType="text/*" />           
+        </activity>        
+
+        <!-- Used for transferring files  after a successful connection -->
+        <service android:enabled="true" android:name="app.peermap.FileTransferService" />        
         <service android:permission="android.permission.ACCESS_COARSE_LOCATION" android:name="app.peermap.LocationPollService"></service>
     </application>
 
