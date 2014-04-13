@@ -28,10 +28,11 @@ public final class R {
     public static final class id {
         public static final int RelativeLayout1=0x7f080007;
         public static final int SaveFileTxtField=0x7f080003;
-        public static final int action_settings=0x7f080010;
+        public static final int action_settings=0x7f080011;
         public static final int choosePathBtn_Home=0x7f080005;
         public static final int choosePathBtn_Path=0x7f080008;
         public static final int compassLbl=0x7f08000e;
+        public static final int compassTxtField=0x7f080010;
         public static final int directionToLbl=0x7f08000a;
         public static final int directionToTxtField=0x7f08000b;
         public static final int distanceToLbl=0x7f08000c;

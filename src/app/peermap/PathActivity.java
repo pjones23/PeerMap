@@ -214,20 +214,6 @@ public class PathActivity extends Activity {
 			Log.i("GPS Location Change", "Updating travel direction");
 			getTravelDirection();
 
-			// display them on interface
-			/*
-			 * TextView directionToTravelField = (TextView)
-			 * findViewById(R.id.DirectionTxtField);
-			 * directionToTravelField.setText(directionTo);
-			 * 
-			 * TextView compassDirectionField = (TextView)
-			 * findViewById(R.id.CompassTxtField);
-			 * compassDirectionField.setText(compassDirection);
-			 * 
-			 * TextView distanceToTravelField = (TextView)
-			 * findViewById(R.id.DistanceTxtField);
-			 * distanceToTravelField.setText(Float.toString(minDistance));
-			 */
 		}
 
 		@Override
@@ -293,12 +279,6 @@ public class PathActivity extends Activity {
 				boolean success = SensorManager.getRotationMatrix(Rotation,
 						Inclination, mGravity, mGeomagnetic);
 				if (success) {
-					/*
-					 * System.out.println("Rotation"); for(float val:Rotation){
-					 * System.out.println(val); }
-					 * System.out.println("Inclination"); for(float
-					 * val:Inclination){ System.out.println(val); }
-					 */
 					float orientation[] = new float[3];
 					SensorManager.getOrientation(Rotation, orientation);
 
@@ -312,8 +292,8 @@ public class PathActivity extends Activity {
 					float degree = (float) Math.round(Math.toDegrees(azimut)); // Math.round(event.values[0]);
 					// To avoid a shaking compass, use the threshold in
 					// difference for new and current degree
-					float threshold = 5;
-					if (Math.abs(currentDegree - degree) > threshold) {
+					float threshold = 3;
+					if (Math.abs(currentDegree - (-degree)) > threshold) {
 
 						// create a rotation animation (reverse turn degree
 						// degrees)
@@ -327,8 +307,17 @@ public class PathActivity extends Activity {
 						ra.setFillAfter(true);
 						// Start the animation
 						compassImage.startAnimation(ra);
+						currentDegree = -degree;
 					}
-					currentDegree = -degree;
+					//currentDegree = -degree;
+					
+					String currentDegreeStr = degreeToDirection((degree+360)%360);
+					
+					// show distance in view
+					final String DEGREE  = "\u00b0";
+					TextView directionTo = (TextView) findViewById(R.id.compassTxtField);
+					directionTo.setText(currentDegreeStr + " (" + Float.toString((degree+360)%360) + DEGREE + ")");
+
 				}
 			}
 		}

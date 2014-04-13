@@ -119,4 +119,16 @@
         android:scaleType="fitXY"
         android:src="@drawable/compass" />
 
+    <TextView
+        android:id="@+id/compassTxtField"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="false"
+        android:layout_alignParentTop="false"
+        android:layout_below="@id/imageViewCompass"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="10dp"
+        android:text="@string/emptyString"
+        android:textAppearance="?android:attr/textAppearanceLarge" />
+
 </RelativeLayout>
