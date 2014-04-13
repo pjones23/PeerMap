@@ -9,7 +9,7 @@
         android:layout_height="60dp" >
 
         <Button
-            android:id="@+id/button1"
+            android:id="@+id/updateBtn"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_alignParentRight="true"

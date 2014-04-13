@@ -11,6 +11,7 @@ import android.view.Gravity;
 import android.view.Menu;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.widget.Button;
 import android.widget.Toast;
 import android.widget.ToggleButton;
 import app.peermap.R;
@@ -69,6 +70,18 @@ public class MainActivity extends Activity {
 				
 			}
 		});
+		
+		Button choosePathBtn = (Button) findViewById(R.id.choosePathBtn_Home);
+		choosePathBtn.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				Intent pathIntent = new Intent(getApplicationContext(), PathActivity.class);
+				startActivity(pathIntent);
+				
+			}
+		});
+		
 				
 		
 	}

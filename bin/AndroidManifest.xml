@@ -28,6 +28,8 @@
             </intent-filter>
         </activity>
         <service android:permission="android.permission.ACCESS_COARSE_LOCATION" android:name="app.peermap.LocationPollService"></service>
+        <activity android:name="DirectionActivity"></activity>
+        <activity android:name="PathActivity"></activity>
     </application>
 
 </manifest>

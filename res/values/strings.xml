@@ -11,5 +11,12 @@
     <string name="GoHomeBtnTxt">Home</string>
     <string name="RecordBtnTxt_On">Recording</string>
     <string name="RecordBtnTxt_Off">Record Path</string>
+    <string name="UpdateBtnTxt">Update</string>
+    <string name="DirectionTxtLabel">Direction To Travel</string>
+    <string name="CompassTxtLabel">Current Direction</string>
+    <string name="DistanceTxtLabel">Distance(meters)</string>
+    <string name="DirectionTxt"></string>
+    <string name="CompassTxt"></string>
+    <string name="DistanceTxt"></string>
 
 </resources>
