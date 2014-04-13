@@ -1,5 +1,6 @@
 package app.peermap;
 
+
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.app.Activity;
@@ -82,6 +83,18 @@ public class MainActivity extends Activity {
 			}
 		});
 		
+		Button saveFile = (Button) findViewById(R.id.saveBtn);
+		saveFile.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				//Intent pathIntent = new Intent(getApplicationContext(), PathActivity.class);
+				//startActivity(pathIntent);
+				Intent toCloud=new Intent(MainActivity.this,DropboxActivity.class);
+    			startService(toCloud);
+				
+			}
+		});
 				
 		
 	}
