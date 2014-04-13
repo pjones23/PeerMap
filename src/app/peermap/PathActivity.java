@@ -16,7 +16,6 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.view.animation.Animation;
@@ -58,7 +57,6 @@ public class PathActivity extends Activity {
 				.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
 		magnetometer = mSensorManager
 				.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD);
-		// mSensorManager.registerListener(listener, Sensor)
 
 		// mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,
 		// THREE_SECONDS, TEN_METERS, mLocationListener);
@@ -68,8 +66,6 @@ public class PathActivity extends Activity {
 		directionTo = "";
 		compassDirection = "";
 
-		currentLocation = mLocationManager
-				.getLastKnownLocation(LocationManager.GPS_PROVIDER);
 
 		// Create route array from csv file
 		// Read file
@@ -110,11 +106,17 @@ public class PathActivity extends Activity {
 				SensorManager.SENSOR_DELAY_UI);
 		mSensorManager.registerListener(mSensorListener, magnetometer,
 				SensorManager.SENSOR_DELAY_UI);
+		
+		startUpdates();
+		
+		currentLocation = mLocationManager
+				.getLastKnownLocation(LocationManager.GPS_PROVIDER);
 
 	}
 
 	public void getClosetPoint() {
 
+		/*
 		closestPoint = routePoints.get(0);
 		minDistance = currentLocation.distanceTo(closestPoint);
 
@@ -132,13 +134,13 @@ public class PathActivity extends Activity {
 			// say we can't start tracking until we get an initial location or
 			// closest point
 		}
+		*/
 
 	}
 
 	public void getTravelDirection() {
 		// TODO implement getting current direction
 		// String direction = "";
-		Log.e("LOG", "log\n");
 		/*
 		 * Location l1 =
 		 * mLocationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
@@ -153,13 +155,9 @@ public class PathActivity extends Activity {
 		 * lo : routePoints) { Log.e("Calculation", l1.bearingTo(lo) + " " +
 		 * l1.distanceTo(lo) + "\n"); }
 		 */
-		float bearingToClosestPoint = currentLocation.bearingTo(closestPoint);
-		System.out.println(bearingToClosestPoint);
+		// float bearingToClosestPoint = currentLocation.bearingTo(closestPoint);
+		// System.out.println(bearingToClosestPoint);
 
-	}
-
-	public void getCompassDirection() {
-		// TODO implement getting current direction
 	}
 
 	/*
@@ -213,9 +211,6 @@ public class PathActivity extends Activity {
 			// update travel to direction
 			getTravelDirection();
 
-			// update compass direction
-			getCompassDirection();
-
 			// display them on interface
 			/*
 			 * TextView directionToTravelField = (TextView)
@@ -257,6 +252,25 @@ public class PathActivity extends Activity {
 			toast.show();
 		}
 	};
+	
+	public void startUpdates() {
+		boolean gpsEnabled = this.mLocationManager
+				.isProviderEnabled(LocationManager.GPS_PROVIDER);
+
+		// check if the GPS was enabled
+		if (gpsEnabled) {
+			// Get gps location if GPS is enabled
+			this.mLocationManager.requestLocationUpdates(
+					LocationManager.GPS_PROVIDER, THREE_SECONDS, TEN_METERS,
+					mLocationListener);
+		}
+	}
+
+	// Stop receiving location updates whenever the Activity becomes invisible.
+	protected void stopUpdates() {
+		this.mLocationManager.removeUpdates(mLocationListener);
+
+	}
 
 	float[] mGravity;
 	float[] mGeomagnetic;
@@ -288,14 +302,11 @@ public class PathActivity extends Activity {
 					azimut = orientation[0]; // orientation contains: azimut,
 												// pitch and roll
 
-					System.out.println(azimut);
-
 					// update compass view
 					ImageView compassImage = (ImageView) findViewById(R.id.imageViewCompass);
 
 					// get the angle around the z-axis rotated
 					float degree = (float) Math.round(Math.toDegrees(azimut)); // Math.round(event.values[0]);
-					System.out.println(degree);
 					// To avoid a shaking compass, use the threshold in
 					// difference for new and current degree
 					float threshold = 5;

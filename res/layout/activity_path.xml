@@ -20,31 +20,14 @@
         android:text="@string/GoHomeBtnTxt" />
 
     <TextView
-        android:id="@+id/textView2"
+        android:id="@+id/directionToLbl"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignRight="@+id/textView1"
-        android:layout_below="@+id/textView1"
-        android:text="Medium Text"
-        android:textAppearance="?android:attr/textAppearanceMedium" />
-
-    <TextView
-        android:id="@+id/textView4"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignRight="@+id/textView3"
-        android:layout_below="@+id/textView3"
-        android:text="Medium Text"
-        android:textAppearance="?android:attr/textAppearanceMedium" />
-    
-     <TextView
-        android:id="@+id/tvHeading"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_below="@id/choosePathBtn_Path"
         android:layout_centerHorizontal="true"
-        android:layout_marginBottom="40dp"
-        android:layout_marginTop="20dp"
-        android:text="Heading: 0.0" />
+        android:layout_marginTop="10dp"
+        android:text="@string/DirectionTxtLabel"
+        android:textAppearance="?android:attr/textAppearanceMedium" />
     
 <!-- 
     <TextView
@@ -87,12 +70,52 @@
         android:textAppearance="?android:attr/textAppearanceLarge" />
  -->
 
+    <TextView
+        android:id="@+id/directionToTxtField"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/directionToLbl"
+        android:layout_centerHorizontal="true"
+        android:text="@string/emptyString"
+        android:textAppearance="?android:attr/textAppearanceLarge" />
+
+    <TextView
+        android:id="@+id/distanceToLbl"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/directionToTxtField"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="10dp"
+        android:text="@string/DistanceTxtLabel"
+        android:textAppearance="?android:attr/textAppearanceMedium" />
+
+     <TextView
+         android:id="@+id/distanceToTxtField"
+         android:layout_width="wrap_content"
+         android:layout_height="wrap_content"
+         android:layout_below="@id/distanceToLbl"
+         android:layout_centerHorizontal="true"
+         android:text="@string/emptyString"
+         android:textAppearance="?android:attr/textAppearanceLarge" />
+
+     <TextView
+         android:id="@+id/compassLbl"
+         android:layout_width="wrap_content"
+         android:layout_height="wrap_content"
+         android:layout_below="@id/distanceToTxtField"
+         android:layout_centerHorizontal="true"
+         android:layout_marginTop="10dp"
+         android:text="@string/CompassTxtLabel"
+         android:textAppearance="?android:attr/textAppearanceMedium" />
+
     <ImageView
         android:id="@+id/imageViewCompass"
         android:layout_width="200dp"
         android:layout_height="200dp"
+        android:layout_below="@id/compassLbl"
         android:layout_centerHorizontal="true"
-        android:layout_centerVertical="true"
+        android:layout_marginTop="10dp"
+        android:contentDescription="@string/CompassTxtLabel"
         android:scaleType="fitXY"
         android:src="@drawable/compass" />
 

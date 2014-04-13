@@ -73,6 +73,7 @@ public class LocationPollService extends Service {
 
 	@Override
 	public void onDestroy() {
+		super.onDestroy();
 		// stop gps polling
 		System.out.println("Stopping GPS poll");
 		stopUpdates();
