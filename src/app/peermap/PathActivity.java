@@ -16,8 +16,8 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Gravity;
-import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.RotateAnimation;
 import android.widget.ImageView;
@@ -36,13 +36,12 @@ public class PathActivity extends Activity {
 	private Location currentLocation;
 	private Location closestPoint;
 	private float minDistance;
-	private String directionTo;
-	private String compassDirection;
+	private String directionToStr;
 	// record the compass picture angle turned
 	private float currentDegree = 0f;
 
 	private static final int THREE_SECONDS = 3000;
-	private static final int TEN_METERS = 10;
+	private static final int TWO_METERS = 2;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -63,37 +62,45 @@ public class PathActivity extends Activity {
 
 		closestPoint = null;
 		minDistance = 0;
-		directionTo = "";
-		compassDirection = "";
-
+		directionToStr = "";
 
 		// Create route array from csv file
 		// Read file
-		// try {
-		/*
-		 * File csvFolder = new File("/storage/emulated/0/", "airdroid/upload");
-		 * Log.v("AIC", csvFolder.toString());
-		 */
-		/*
-		 * // TODO change to different static file location for my testing File
-		 * csvFile = new File("/system", "path" + ".csv"); reader = new
-		 * CSVReader(new FileReader(csvFile), ';'); } catch
-		 * (FileNotFoundException e) { e.printStackTrace(); }
-		 * 
-		 * Log.e("LOG", "file read"); // Parse csv and store into array list
-		 * String[] nextLine; try { while ((nextLine = reader.readNext()) !=
-		 * null) { // nextLine[] is an array of values from the line String[]
-		 * parts = nextLine[0].split(";");
-		 */
-		/*
-		 * Log.e("DOUBLE", parts[0]); Log.e("DOUBLE1", parts[1]);
-		 */
-		/*
-		 * Location l = new Location(LocationManager.GPS_PROVIDER);
-		 * l.setLatitude(Double.parseDouble(parts[0]));
-		 * l.setLongitude(Double.parseDouble(parts[1])); routePoints.add(l); } }
-		 * catch (IOException e) { e.printStackTrace(); }
-		 */
+		try {
+			// static file location for my testing File
+			File csvFile = new File("/storage/emulated/0/PeerMap/Sample",
+					"path" + ".csv");
+			reader = new CSVReader(new FileReader(csvFile), ';');
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		}
+
+		Log.e("LOG", "file read"); // Parse csv and store into array list
+		String[] nextLine;
+		try {
+			while ((nextLine = reader.readNext()) != null) { // nextLine[] is an
+																// array of
+																// values from
+																// the line
+																// String[]
+				String[] parts = nextLine[0].split(";");
+
+				Log.i("Latitude", parts[0]);
+				Log.i("Longitude", parts[1]);
+
+				Location l = new Location(LocationManager.GPS_PROVIDER);
+				l.setLatitude(Double.parseDouble(parts[0]));
+				l.setLongitude(Double.parseDouble(parts[1]));
+				routePoints.add(l);
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
+		for (Location loc : routePoints) {
+			System.out.println("Lat: " + loc.getLatitude() + ", Long: "
+					+ loc.getLongitude());
+		}
 
 	}
 
@@ -106,18 +113,17 @@ public class PathActivity extends Activity {
 				SensorManager.SENSOR_DELAY_UI);
 		mSensorManager.registerListener(mSensorListener, magnetometer,
 				SensorManager.SENSOR_DELAY_UI);
-		
+
 		startUpdates();
-		
+
 		currentLocation = mLocationManager
 				.getLastKnownLocation(LocationManager.GPS_PROVIDER);
 
 	}
 
 	public void getClosetPoint() {
-
-		/*
 		closestPoint = routePoints.get(0);
+
 		minDistance = currentLocation.distanceTo(closestPoint);
 
 		if (currentLocation != null) {
@@ -130,33 +136,28 @@ public class PathActivity extends Activity {
 					minDistance = distance;
 				}
 			}
-		} else {
-			// say we can't start tracking until we get an initial location or
-			// closest point
+			// show distance in view
+			TextView distanceTo = (TextView) findViewById(R.id.distanceToTxtField);
+			distanceTo.setText(Float.toString(minDistance));
 		}
-		*/
-
+		else{
+			// say we can't start tracking until we get an initial location or closest point
+		}
 	}
 
 	public void getTravelDirection() {
-		// TODO implement getting current direction
-		// String direction = "";
-		/*
-		 * Location l1 =
-		 * mLocationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-		 * if(l1 != null)Log.e("LOG", "Get Location: \n" + l1.toString()); else
-		 * Log.e("LOG", "l1 is null");
-		 * 
-		 * 
-		 * LatLng loc = new LatLng(Double.parseDouble("33.77794599"),
-		 * Double.parseDouble("-84.40939124")); Location l1 = new
-		 * Location("reverseGeocoded"); l1.setLatitude(loc.latitude);
-		 * l1.setLongitude(loc.longitude); displayRoutePoints(); for (Location
-		 * lo : routePoints) { Log.e("Calculation", l1.bearingTo(lo) + " " +
-		 * l1.distanceTo(lo) + "\n"); }
-		 */
-		// float bearingToClosestPoint = currentLocation.bearingTo(closestPoint);
-		// System.out.println(bearingToClosestPoint);
+		// gets current direction
+
+		float bearingToClosestPoint = currentLocation.bearingTo(closestPoint);
+		bearingToClosestPoint = (bearingToClosestPoint+360)%360;
+		System.out.println(bearingToClosestPoint);
+		
+		directionToStr = degreeToDirection(bearingToClosestPoint);
+		
+		// show distance in view
+		final String DEGREE  = "\u00b0";
+		TextView directionTo = (TextView) findViewById(R.id.directionToTxtField);
+		directionTo.setText(directionToStr + " (" + Float.toString(bearingToClosestPoint) + DEGREE + ")");
 
 	}
 
@@ -174,13 +175,13 @@ public class PathActivity extends Activity {
 		super.onDestroy();
 		// stop gps polling
 		System.out.println("Stopping GPS poll");
-		
+
 		mSensorManager.unregisterListener(mSensorListener);
 
 		// close csv file
 		// write the location to the cvs file
 		try {
-			if (reader != null){
+			if (reader != null) {
 				reader.close();
 			}
 			/*
@@ -194,7 +195,7 @@ public class PathActivity extends Activity {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		
+
 		finish();
 
 	}
@@ -205,10 +206,12 @@ public class PathActivity extends Activity {
 			// update current location
 			currentLocation = location;
 
-			// update closet point
+			// update closest point
+			Log.i("GPS Location Change", "Updating closest point");
 			getClosetPoint();
 
 			// update travel to direction
+			Log.i("GPS Location Change", "Updating travel direction");
 			getTravelDirection();
 
 			// display them on interface
@@ -252,7 +255,7 @@ public class PathActivity extends Activity {
 			toast.show();
 		}
 	};
-	
+
 	public void startUpdates() {
 		boolean gpsEnabled = this.mLocationManager
 				.isProviderEnabled(LocationManager.GPS_PROVIDER);
@@ -261,7 +264,7 @@ public class PathActivity extends Activity {
 		if (gpsEnabled) {
 			// Get gps location if GPS is enabled
 			this.mLocationManager.requestLocationUpdates(
-					LocationManager.GPS_PROVIDER, THREE_SECONDS, TEN_METERS,
+					LocationManager.GPS_PROVIDER, THREE_SECONDS, TWO_METERS,
 					mLocationListener);
 		}
 	}
@@ -335,5 +338,44 @@ public class PathActivity extends Activity {
 			// do nothing
 		}
 	};
+	
+	public String degreeToDirection(float degree){
+		String direction = "";
+		
+		if(degree > 330 || degree < 30)
+		{
+			direction = "N"; // North
+		}
+		else if(degree > 30 && degree < 60)
+		{
+			direction = "NE"; // North
+		}
+		else if(degree > 60 && degree < 120)
+		{
+			direction = "E"; // North
+		}
+		else if(degree > 120 && degree < 150)
+		{
+			direction = "SE"; // North
+		}
+		else if(degree > 150 && degree < 210)
+		{
+			direction = "S"; // North
+		}
+		else if(degree > 210 && degree < 240)
+		{
+			direction = "SW"; // North
+		}
+		else if(degree > 240 && degree < 300)
+		{
+			direction = "W"; // North
+		}
+		else if(degree > 300 && degree < 330)
+		{
+			direction = "NW"; // North
+		}
+		
+		return direction;
+	}
 
 }
