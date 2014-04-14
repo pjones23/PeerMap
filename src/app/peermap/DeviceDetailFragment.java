@@ -30,12 +30,13 @@ import android.net.wifi.p2p.WifiP2pManager.ConnectionInfoListener;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
+import android.provider.MediaStore.Files;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-
+import android.widget.Toast;
 import app.peermap.DeviceListFragment.DeviceActionListener;
 
 import java.io.File;
@@ -44,6 +45,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.net.InetSocketAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 
@@ -55,6 +57,7 @@ import java.net.Socket;
 public class DeviceDetailFragment extends Fragment implements ConnectionInfoListener {
 
     protected static final int CHOOSE_FILE_RESULT_CODE = 20;
+    private static final int SOCKET_TIMEOUT = 5000;
     private View mContentView = null;
     private WifiP2pDevice device;
     private WifiP2pInfo info;
@@ -144,20 +147,36 @@ public class DeviceDetailFragment extends Fragment implements ConnectionInfoList
                 		
                 		Uri uri = Uri.parse(f.getName());
                 		
-                        Intent serviceIntent = new Intent(getActivity(), FileTransferService.class);
-                        serviceIntent.setAction(FileTransferService.ACTION_RECV_FILE);
-                        serviceIntent.putExtra(FileTransferService.EXTRAS_FILE_PATH, uri.toString());
-                        serviceIntent.putExtra(FileTransferService.EXTRAS_GROUP_OWNER_ADDRESS,
-                                info.groupOwnerAddress.getHostAddress());
-                        serviceIntent.putExtra(FileTransferService.EXTRAS_GROUP_OWNER_PORT, 8988);
-                        getActivity().startService(serviceIntent);
+                		Socket socket = new Socket();
+                		String host = info.groupOwnerAddress.getHostAddress();
+                		int port = 8988;
+                		
+                		try {
+                            Log.d(WiFiDirectActivity.TAG, "Opening client socket - ");
+                            socket.bind(null);
+                            socket.connect((new InetSocketAddress(host, port)), SOCKET_TIMEOUT);
+                            Log.d(WiFiDirectActivity.TAG, "Client socket - " + socket.isConnected());
+                            
+                            InputStream stream = socket.getInputStream();
+                            copyFile(stream, new FileOutputStream(f));
+                		 } catch (IOException e) {
+                             Log.e(WiFiDirectActivity.TAG, e.getMessage());
+                         }   
+                		
+                        //Intent serviceIntent = new Intent(getActivity(), FileTransferService.class);
+                        //serviceIntent.setAction(FileTransferService.ACTION_RECV_FILE);
+                        //serviceIntent.putExtra(FileTransferService.EXTRAS_FILE_PATH, uri.toString());
+                        //serviceIntent.putExtra(FileTransferService.EXTRAS_GROUP_OWNER_ADDRESS,
+                          //      info.groupOwnerAddress.getHostAddress());
+                        //serviceIntent.putExtra(FileTransferService.EXTRAS_GROUP_OWNER_PORT, 8988);
+                        //getActivity().startService(serviceIntent);
                         
                         //Let the user choose a file
-                		Intent intent = new Intent(Intent.ACTION_GET_CONTENT);  
-                		uri = Uri.parse(Environment.getExternalStorageDirectory().getPath());
-                		intent.setDataAndType(uri , "file/*");
+                		//Intent intent = new Intent(Intent.ACTION_GET_CONTENT);  
+                		//uri = Uri.parse(Environment.getExternalStorageDirectory().getPath());
+                		//intent.setDataAndType(uri , "file/*");
                 		
-                		startActivityForResult(Intent.createChooser(intent, "Open folder"), CHOOSE_FILE_RESULT_CODE);
+                		//startActivityForResult(Intent.createChooser(intent, "Open folder"), CHOOSE_FILE_RESULT_CODE);
                 		
                 	}
                 });
@@ -171,7 +190,7 @@ public class DeviceDetailFragment extends Fragment implements ConnectionInfoList
         // User has picked an image. Transfer it to group owner i.e peer using
         // FileTransferService.
     	
-        Uri uri = data.getData();
+        //Uri uri = data.getData();
         
       //open the file or pass it to the code that does direction stuff
         //For now, don't do anything
@@ -287,10 +306,16 @@ public class DeviceDetailFragment extends Fragment implements ConnectionInfoList
                 final File f = new File(Environment.getExternalStorageDirectory() + "/"
                 		+ context.getPackageName() + "/wifip2pshared-1397494911222.jpg");
 
-                File dirs = new File(f.getParent());
-                if (!dirs.exists())
-                    dirs.mkdirs();
+                //File dirs = new File(f.getParent());
+                //if (!dirs.exists())
+                    //dirs.mkdirs();
                 //f.createNewFile();
+                
+                if(!f.exists()){
+                	//Toast.makeText(getApplicationContext(), "Sharing path to peer.",
+                      //      Toast.LENGTH_SHORT).show();
+                	Log.d(WiFiDirectActivity.TAG, "Could not find file on remote peer");
+                }
 
                 Log.d(WiFiDirectActivity.TAG, "server: copying files " + f.toString());
                 //InputStream inputstream = client.getInputStream();
