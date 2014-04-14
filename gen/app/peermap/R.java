@@ -26,23 +26,24 @@ public final class R {
         public static final int which_way_blue=0x7f020002;
     }
     public static final class id {
-        public static final int RelativeLayout1=0x7f08000b;
+        public static final int RelativeLayout1=0x7f08000c;
         public static final int SaveFileTxtField=0x7f080007;
-        public static final int action_settings=0x7f080015;
+        public static final int action_settings=0x7f080016;
         public static final int choosePathBtn_Home=0x7f080009;
-        public static final int choosePathBtn_Path=0x7f08000c;
-        public static final int compassLbl=0x7f080012;
-        public static final int compassTxtField=0x7f080014;
+        public static final int choosePathBtn_Path=0x7f08000d;
+        public static final int cloudLogBtn=0x7f08000b;
+        public static final int compassLbl=0x7f080013;
+        public static final int compassTxtField=0x7f080015;
         public static final int container_files=0x7f080006;
-        public static final int directionToLbl=0x7f08000e;
-        public static final int directionToTxtField=0x7f08000f;
-        public static final int distanceToLbl=0x7f080010;
-        public static final int distanceToTxtField=0x7f080011;
+        public static final int directionToLbl=0x7f08000f;
+        public static final int directionToTxtField=0x7f080010;
+        public static final int distanceToLbl=0x7f080011;
+        public static final int distanceToTxtField=0x7f080012;
         public static final int download_file=0x7f080005;
         public static final int dropbox_login=0x7f080003;
         public static final int editText1=0x7f080001;
-        public static final int goHomeBtn=0x7f08000d;
-        public static final int imageViewCompass=0x7f080013;
+        public static final int goHomeBtn=0x7f08000e;
+        public static final int imageViewCompass=0x7f080014;
         public static final int listView1=0x7f080002;
         public static final int recordBtn=0x7f08000a;
         public static final int saveBtn=0x7f080008;
@@ -60,6 +61,8 @@ public final class R {
     }
     public static final class string {
         public static final int ChoosePathBtnTxt=0x7f050004;
+        public static final int CloudLogin=0x7f05000f;
+        public static final int CloudLogout=0x7f050010;
         public static final int CompassTxtLabel=0x7f05000c;
         public static final int DirectionTxtLabel=0x7f05000b;
         public static final int DistanceTxtLabel=0x7f05000d;

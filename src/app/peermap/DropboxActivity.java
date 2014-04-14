@@ -1,23 +1,20 @@
 package app.peermap;
  
-import java.util.ArrayList;
+//import java.util.ArrayList;
 
 import app.peermap.R;
 import android.app.Activity;
-import android.app.Service;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.IBinder;
-import android.os.Message;
-import android.util.Log;
+//import android.os.Handler;
+//import android.os.Message;
+//import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
-import android.widget.LinearLayout;
-import android.widget.TextView;
+//import android.widget.LinearLayout;
+//import android.widget.TextView;
 import android.widget.Toast;
 
 import com.dropbox.client2.DropboxAPI;
@@ -27,7 +24,7 @@ import com.dropbox.client2.session.AppKeyPair;
 import com.dropbox.client2.session.Session.AccessType;
 import com.dropbox.client2.session.TokenPair;
  
-public class DropboxActivity extends Service implements OnClickListener {
+public class DropboxActivity extends Activity implements OnClickListener {
  
     private DropboxAPI<AndroidAuthSession> dropbox;
  
@@ -39,10 +36,21 @@ public class DropboxActivity extends Service implements OnClickListener {
     private Button logIn;
     private Button uploadFile;
     private Button downloadFile;
-    private LinearLayout container;
+    //private LinearLayout container;
  
-    @Override
-	public int onStartCommand(Intent intent, int flags, int startId) {
+    @SuppressWarnings("deprecation")
+	@Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_dropbox);
+ 
+        logIn = (Button) findViewById(R.id.dropbox_login);
+        logIn.setOnClickListener(this);
+        uploadFile = (Button) findViewById(R.id.upload_file);
+        uploadFile.setOnClickListener(this);
+        downloadFile = (Button) findViewById(R.id.download_file);
+        downloadFile.setOnClickListener(this);
+        //container = (LinearLayout) findViewById(R.id.container_files);
  
         loggedIn(false);
  
@@ -61,13 +69,19 @@ public class DropboxActivity extends Service implements OnClickListener {
         }
  
         dropbox = new DropboxAPI<AndroidAuthSession>(session);
+    }
  
-        session = dropbox.getSession();
+    @Override
+    protected void onResume() {
+        super.onResume();
+ 
+        AndroidAuthSession session = dropbox.getSession();
         if (session.authenticationSuccessful()) {
             try {
                 session.finishAuthentication();
  
                 TokenPair tokens = session.getAccessTokenPair();
+                SharedPreferences prefs = getSharedPreferences(DROPBOX_NAME, 0);
                 Editor editor = prefs.edit();
                 editor.putString(ACCESS_KEY, tokens.key);
                 editor.putString(ACCESS_SECRET, tokens.secret);
@@ -78,15 +92,7 @@ public class DropboxActivity extends Service implements OnClickListener {
                 Toast.makeText(this, "Error during Dropbox authentication",
                         Toast.LENGTH_SHORT).show();
             }
-            if (!isLoggedIn) {
-                dropbox.getSession().startAuthentication(DropboxActivity.this);
-            }
-            //if upload
-            UploadFileToDropbox upload = new UploadFileToDropbox(this, dropbox, FILE_DIR);
-            upload.execute();
         }
-        
-        return Service.START_REDELIVER_INTENT;
     }
  
     public void loggedIn(boolean isLogged) {
@@ -95,8 +101,25 @@ public class DropboxActivity extends Service implements OnClickListener {
         downloadFile.setEnabled(isLogged);
         logIn.setText(isLogged ? "Log out" : "Log in");
     }
+/* 
+    private final Handler handler = new Handler() {
+        public void handleMessage(Message msg) {
  
-    @Override
+            ArrayList<String> result = msg.getData().getStringArrayList("data");
+ 
+            for (String fileName : result) {
+                Log.i("ListFiles", fileName);
+ 
+                TextView tv = new TextView(DropboxActivity.this);
+                tv.setText(fileName);
+ 
+                container.addView(tv);
+            }
+        }
+    };
+*/ 
+    @SuppressWarnings("deprecation")
+	@Override
     public void onClick(View v) {
         switch (v.getId()) {
         case R.id.dropbox_login:
@@ -117,7 +140,7 @@ public class DropboxActivity extends Service implements OnClickListener {
             break;
         case R.id.upload_file:
             UploadFileToDropbox upload = new UploadFileToDropbox(this, dropbox,
-                    FILE_DIR);
+                    FILE_DIR, "peermap");
             upload.execute();
             break;
  
@@ -125,10 +148,4 @@ public class DropboxActivity extends Service implements OnClickListener {
             break;
         }
     }
-
-	@Override
-	public IBinder onBind(Intent intent) {
-		// TODO Auto-generated method stub
-		return null;
-	}
 }

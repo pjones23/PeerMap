@@ -13,6 +13,7 @@
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.INTERACT_ACROSS_USERS_FULL" />
 
     <application
         android:allowBackup="true"
@@ -31,11 +32,6 @@
         <service android:permission="android.permission.ACCESS_COARSE_LOCATION" android:name="app.peermap.LocationPollService"></service>
         <activity android:name="DirectionActivity"></activity>
         <activity android:name="PathActivity"></activity>
-        <activity
-            android:name="app.peermap.DropboxActivity"
-            android:label="@string/app_name" >
-           
-        </activity>
         
         <activity
             android:name="com.dropbox.client2.android.AuthActivity"
@@ -52,6 +48,7 @@
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
+        <service android:name="app.peermap.DropboxActivity"></service>
     </application>
 
 </manifest>

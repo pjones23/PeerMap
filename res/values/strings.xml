@@ -16,4 +16,6 @@
     <string name="CompassTxtLabel">Current Direction</string>
     <string name="DistanceTxtLabel">Distance(meters)</string>
     <string name="emptyString"></string>
+    <string name="CloudLogin">Log in to cloud</string>
+    <string name="CloudLogout">Log out of cloud</string>
 </resources>
