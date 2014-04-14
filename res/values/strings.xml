@@ -18,4 +18,5 @@
     <string name="emptyString"></string>
     <string name="CloudLogin">Log in to cloud</string>
     <string name="CloudLogout">Log out of cloud</string>
+    <string name="PeerHelpBtn">Peer help</string>
 </resources>

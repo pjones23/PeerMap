@@ -49,6 +49,7 @@
             </intent-filter>
         </activity>
         <service android:name="app.peermap.DropboxActivity"></service>
+        <activity android:name="ChoosePathActivity"></activity>
     </application>
 
 </manifest>

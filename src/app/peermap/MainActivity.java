@@ -98,10 +98,15 @@ public class MainActivity extends Activity {
 
 			@Override
 			public void onClick(View v) {
+				/*
 				Intent pathIntent = new Intent(getApplicationContext(),
 						PathActivity.class);
 				startActivity(pathIntent);
-
+				*/
+				Intent choosePathIntent = new Intent(getApplicationContext(),
+						ChoosePathActivity.class);
+				startActivity(choosePathIntent);
+				
 			}
 		});
 
@@ -161,6 +166,11 @@ public class MainActivity extends Activity {
 		super.onResume();
 
 		AndroidAuthSession session = dropbox.getSession();
+		
+		if(session.isLinked()){
+			loggedIn(true);
+		}
+		
 		if (session.authenticationSuccessful()) {
 			try {
 				session.finishAuthentication();

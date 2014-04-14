@@ -68,7 +68,7 @@ public class PathActivity extends Activity {
 		// Read file
 		try {
 			// static file location for my testing File
-			File csvFile = new File("/storage/emulated/0/PeerMap/Sample",
+			File csvFile = new File("/storage/emulated/0/PeerMap/SavedPaths",
 					"path" + ".csv");
 			reader = new CSVReader(new FileReader(csvFile), ';');
 		} catch (FileNotFoundException e) {
