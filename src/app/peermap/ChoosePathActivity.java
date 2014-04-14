@@ -21,6 +21,7 @@ import com.dropbox.client2.session.Session.AccessType;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.os.AsyncTask;
@@ -173,7 +174,9 @@ public class ChoosePathActivity extends Activity {
 
 				} else {
 					// start Path activity
-					
+					Intent pathIntent = new Intent(getApplicationContext(), PathActivity.class);
+					pathIntent.putExtra("pathName", chosenPath);
+					startActivity(pathIntent);					
 				}
 
 			}
