@@ -304,7 +304,7 @@ public class DeviceDetailFragment extends Fragment implements ConnectionInfoList
                         + context.getPackageName() + "/wifip2pshared-" + System.currentTimeMillis()
                         + ".jpg");*/
                 final File f = new File(Environment.getExternalStorageDirectory() + "/"
-                		+ context.getPackageName() + "/wifip2pshared-1397494911222.jpg");
+                		+ /*context.getPackageName()*/"app.peermap" + "/wifip2pshared-1397494911222.jpg");
 
                 //File dirs = new File(f.getParent());
                 //if (!dirs.exists())
@@ -312,8 +312,8 @@ public class DeviceDetailFragment extends Fragment implements ConnectionInfoList
                 //f.createNewFile();
                 
                 if(!f.exists()){
-                	//Toast.makeText(getApplicationContext(), "Sharing path to peer.",
-                      //      Toast.LENGTH_SHORT).show();
+                	Toast.makeText(context, "Sharing path to peer.",
+                            Toast.LENGTH_SHORT).show();
                 	Log.d(WiFiDirectActivity.TAG, "Could not find file on remote peer");
                 }
 
