@@ -40,6 +40,7 @@ import app.peermap.DeviceListFragment.DeviceActionListener;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -116,10 +117,46 @@ public class DeviceDetailFragment extends Fragment implements ConnectionInfoList
                     
                 	@Override
                     public void onClick(View v) {
+                		
+                		//First, read the file from remote peer to a specific path in the local file system
+                		
+                        // FileTransferService.
+                        //Uri uri = data.getData();
+                        //Uri uri = 0; //some fixed path on local filesystem from where to read the route files
+                        //TextView statusText = (TextView) mContentView.findViewById(R.id.status_text);
+                        //statusText.setText("Receiving: " + uri);
+                        //Log.d(WiFiDirectActivity.TAG, "Intent----------- " + uri);
+                		
+                		final File f = new File(Environment.getExternalStorageDirectory() + "/"
+                        + getActivity().getPackageName() + "/wifip2pshared-" + System.currentTimeMillis()
+                        + ".jpg");
 
+                		File dirs = new File(f.getParent());
+                		if (!dirs.exists())
+                			dirs.mkdirs();
+                		try {
+							f.createNewFile();
+						} catch (IOException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+                		
+                		
+                		Uri uri = Uri.parse(f.getName());
+                		
+                        Intent serviceIntent = new Intent(getActivity(), FileTransferService.class);
+                        serviceIntent.setAction(FileTransferService.ACTION_RECV_FILE);
+                        serviceIntent.putExtra(FileTransferService.EXTRAS_FILE_PATH, uri.toString());
+                        serviceIntent.putExtra(FileTransferService.EXTRAS_GROUP_OWNER_ADDRESS,
+                                info.groupOwnerAddress.getHostAddress());
+                        serviceIntent.putExtra(FileTransferService.EXTRAS_GROUP_OWNER_PORT, 8988);
+                        getActivity().startService(serviceIntent);
+                        
+                        //Let the user choose a file
                 		Intent intent = new Intent(Intent.ACTION_GET_CONTENT);  
-                		Uri uri = Uri.parse(Environment.getExternalStorageDirectory().getPath());
-                		intent.setDataAndType(uri , "file/*");   
+                		uri = Uri.parse(Environment.getExternalStorageDirectory().getPath());
+                		intent.setDataAndType(uri , "file/*");
+                		
                 		startActivityForResult(Intent.createChooser(intent, "Open folder"), CHOOSE_FILE_RESULT_CODE);
                 		
                 	}
@@ -133,8 +170,13 @@ public class DeviceDetailFragment extends Fragment implements ConnectionInfoList
 
         // User has picked an image. Transfer it to group owner i.e peer using
         // FileTransferService.
+    	
         Uri uri = data.getData();
-        TextView statusText = (TextView) mContentView.findViewById(R.id.status_text);
+        
+      //open the file or pass it to the code that does direction stuff
+        //For now, don't do anything
+        
+        /*TextView statusText = (TextView) mContentView.findViewById(R.id.status_text);
         statusText.setText("Sending: " + uri);
         Log.d(WiFiDirectActivity.TAG, "Intent----------- " + uri);
         Intent serviceIntent = new Intent(getActivity(), FileTransferService.class);
@@ -143,7 +185,7 @@ public class DeviceDetailFragment extends Fragment implements ConnectionInfoList
         serviceIntent.putExtra(FileTransferService.EXTRAS_GROUP_OWNER_ADDRESS,
                 info.groupOwnerAddress.getHostAddress());
         serviceIntent.putExtra(FileTransferService.EXTRAS_GROUP_OWNER_PORT, 8988);
-        getActivity().startService(serviceIntent);
+        getActivity().startService(serviceIntent);*/
     }
 
     @Override
@@ -239,18 +281,22 @@ public class DeviceDetailFragment extends Fragment implements ConnectionInfoList
                 Log.d(WiFiDirectActivity.TAG, "Server: Socket opened");
                 Socket client = serverSocket.accept();
                 Log.d(WiFiDirectActivity.TAG, "Server: connection done");
-                final File f = new File(Environment.getExternalStorageDirectory() + "/"
+                /*final File f = new File(Environment.getExternalStorageDirectory() + "/"
                         + context.getPackageName() + "/wifip2pshared-" + System.currentTimeMillis()
-                        + ".jpg");
+                        + ".jpg");*/
+                final File f = new File(Environment.getExternalStorageDirectory() + "/"
+                		+ context.getPackageName() + "/wifip2pshared-1397494911222.jpg");
 
                 File dirs = new File(f.getParent());
                 if (!dirs.exists())
                     dirs.mkdirs();
-                f.createNewFile();
+                //f.createNewFile();
 
                 Log.d(WiFiDirectActivity.TAG, "server: copying files " + f.toString());
-                InputStream inputstream = client.getInputStream();
-                copyFile(inputstream, new FileOutputStream(f));
+                //InputStream inputstream = client.getInputStream();
+                OutputStream outputstream = client.getOutputStream();
+                //copyFile(inputstream, new FileOutputStream(f));
+                copyFile(new FileInputStream(f), outputstream);
                 serverSocket.close();
                 return f.getAbsolutePath();
             } catch (IOException e) {
@@ -267,11 +313,15 @@ public class DeviceDetailFragment extends Fragment implements ConnectionInfoList
         protected void onPostExecute(String result) {
             if (result != null) {
                 statusText.setText("File copied - " + result);
+                
+                //Remote peer is done after file is sent
+                if(false){
                 Intent intent = new Intent();
                 intent.setAction(android.content.Intent.ACTION_VIEW);
                 //intent.setDataAndType(Uri.parse("file://" + result), "image/*");
                 intent.setDataAndType(Uri.parse("file://" + result), "text/*");
                 context.startActivity(intent);
+                }
             }
 
         }

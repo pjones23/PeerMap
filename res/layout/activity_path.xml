@@ -4,11 +4,11 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent" >
 
-    <Button
-        android:id="@+id/choosePathBtn_Path"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/ChoosePathBtnTxt" />
+    <!--<Button -->
+    <!--    android:id="@+id/choosePathBtn_Path"      -->
+    <!--   android:layout_width="match_parent"        -->
+    <!--    android:layout_height="wrap_content"      -->
+    <!--    android:text="@string/ChoosePathBtnTxt" /> -->
 
     <Button
         android:id="@+id/goHomeBtn"

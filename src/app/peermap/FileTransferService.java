@@ -24,6 +24,7 @@ public class FileTransferService extends IntentService {
 
     private static final int SOCKET_TIMEOUT = 5000;
     public static final String ACTION_SEND_FILE = "app.peermap.SEND_FILE";
+    public static final String ACTION_RECV_FILE = "app.peermap.RECV_FILE";
     public static final String EXTRAS_FILE_PATH = "file_url";
     public static final String EXTRAS_GROUP_OWNER_ADDRESS = "go_host";
     public static final String EXTRAS_GROUP_OWNER_PORT = "go_port";
@@ -82,5 +83,48 @@ public class FileTransferService extends IntentService {
             }
 
         }
+        if (intent.getAction().equals(ACTION_RECV_FILE)) {
+            String fileUri = intent.getExtras().getString(EXTRAS_FILE_PATH);
+            String host = intent.getExtras().getString(EXTRAS_GROUP_OWNER_ADDRESS);
+            Socket socket = new Socket();
+            int port = intent.getExtras().getInt(EXTRAS_GROUP_OWNER_PORT);
+
+            try {
+                Log.d(WiFiDirectActivity.TAG, "Opening client socket - ");
+                socket.bind(null);
+                socket.connect((new InetSocketAddress(host, port)), SOCKET_TIMEOUT);
+
+                Log.d(WiFiDirectActivity.TAG, "Client socket - " + socket.isConnected());
+                //OutputStream stream = socket.getOutputStream();
+                InputStream stream = socket.getInputStream();
+                ContentResolver cr = context.getContentResolver();
+                //InputStream is = null;
+                OutputStream os = null;
+                try {
+                    //is = cr.openInputStream(Uri.parse(fileUri));
+                    os = cr.openOutputStream(Uri.parse(fileUri));
+                } catch (FileNotFoundException e) {
+                    Log.d(WiFiDirectActivity.TAG, e.toString());
+                }
+                //DeviceDetailFragment.copyFile(is, stream);
+                DeviceDetailFragment.copyFile(stream, os);
+                //Log.d(WiFiDirectActivity.TAG, "Client: Data written");
+                Log.d(WiFiDirectActivity.TAG, "Client: Data read");
+            } catch (IOException e) {
+                Log.e(WiFiDirectActivity.TAG, e.getMessage());
+            } finally {
+                if (socket != null) {
+                    if (socket.isConnected()) {
+                        try {
+                            socket.close();
+                        } catch (IOException e) {
+                            // Give up
+                            e.printStackTrace();
+                        }
+                    }
+                }
+            }
+
+        }        
     }
 }

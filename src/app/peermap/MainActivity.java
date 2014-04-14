@@ -25,12 +25,37 @@ public class MainActivity extends Activity {
 		setContentView(R.layout.activity_main);
 		
 		final ToggleButton recordBtn = (ToggleButton) findViewById(R.id.recordBtn);
+		final ToggleButton choosePathBtn_Home = (ToggleButton) findViewById(R.id.choosePathBtn_Home);
 		
 		if(isLocationPollServiceRunning()){
 			recordBtn.setChecked(true);
 		}
 		
+		choosePathBtn_Home.setChecked(false);
+		choosePathBtn_Home.setText("Choose Routes");
+		
 		this.gpsLocationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+		
+		choosePathBtn_Home.setOnClickListener( new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				
+				if(choosePathBtn_Home.isChecked()){
+					startWifiDirect();
+				}				
+			}
+			
+			private void startWifiDirect(){
+				
+				Intent startP2P = new Intent(getApplicationContext(), WiFiDirectActivity.class);
+				startActivity(startP2P);
+				
+			}
+			
+			/*public void startClicked(View view) {
+		        startService(new Intent("LocationPollService"));
+		    }*/
+		});
 		
 		recordBtn.setOnClickListener( new OnClickListener() {
 			
@@ -65,21 +90,23 @@ public class MainActivity extends Activity {
 				else{
 					System.out.println("Stop Recording");
 					stopService(locationPollIntent);
-					startWifiDirect();
+					//startWifiDirect();
 				}
 				
 			}
 			
-			private void startWifiDirect(){
+			/*private void startWifiDirect(){
 				
 				Intent startP2P = new Intent(getApplicationContext(), WiFiDirectActivity.class);
 				startActivity(startP2P);
 				
-			}
+			}*/
 		});
 				
 		
 	}
+	
+	
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {

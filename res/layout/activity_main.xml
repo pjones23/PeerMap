@@ -30,7 +30,7 @@
         android:layout_toRightOf="@+id/SaveFileTxtField"
         android:text="@string/SaveBtnTxt" />
 
-    <Button
+    <ToggleButton
         android:id="@+id/choosePathBtn_Home"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
