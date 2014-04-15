@@ -5,6 +5,7 @@
     <string name="action_settings">Settings</string>
     <string name="hello_world">Hello world!</string>
     <string name="SaveBtnTxt">Save</string>
+    <string name="UploadBtnTxt">Upload To Cloud</string>
     <string name="ChoosePathBtnTxt">Choose Path</string>
     <string name="SaveFileHint">Enter Path Name</string>
     <string name="RecordPathContentDesc">Button to record and stop recording path</string>
@@ -16,6 +17,7 @@
     <string name="CompassTxtLabel">Current Direction</string>
     <string name="DistanceTxtLabel">Distance(meters)</string>
     <string name="emptyString"></string>
+    <string name="CloudDefault">No Cloud Access</string>
     <string name="CloudLogin">Log in to cloud</string>
     <string name="CloudLogout">Log out of cloud</string>
     <string name="PeerHelpBtn">Peer help</string>

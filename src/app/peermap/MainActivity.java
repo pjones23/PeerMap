@@ -1,7 +1,14 @@
 package app.peermap;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.nio.channels.FileChannel;
+
 import android.location.LocationManager;
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Environment;
 import android.app.Activity;
 import android.app.ActivityManager;
 import android.app.ActivityManager.RunningServiceInfo;
@@ -39,6 +46,7 @@ public class MainActivity extends Activity {
 	private boolean isLoggedIn;
 	private Button logIn;
 	private Button saveFile;
+	private Button uploadFile;
 
 	@SuppressWarnings("deprecation")
 	@Override
@@ -98,15 +106,11 @@ public class MainActivity extends Activity {
 
 			@Override
 			public void onClick(View v) {
-				/*
-				Intent pathIntent = new Intent(getApplicationContext(),
-						PathActivity.class);
-				startActivity(pathIntent);
-				*/
+
 				Intent choosePathIntent = new Intent(getApplicationContext(),
 						ChoosePathActivity.class);
 				startActivity(choosePathIntent);
-				
+
 			}
 		});
 
@@ -118,10 +122,45 @@ public class MainActivity extends Activity {
 				TextView pathNameField = (TextView) findViewById(R.id.SaveFileTxtField);
 				String pathName = pathNameField.getText().toString();
 				if (pathName != null && !pathName.isEmpty()) {
-					UploadFileToDropbox upload = new UploadFileToDropbox(
-							getApplicationContext(), dropbox, FILE_DIR,
-							pathName);
-					upload.execute();
+					// Transfer saved file to sd card
+					File csvFolder = new File(Environment
+							.getExternalStorageDirectory(), "PeerMap");
+					File csvFile = new File(csvFolder, "path" + ".csv");
+					if (csvFile.exists()) {
+						new SavePathToSD(MainActivity.this).execute("");
+					} else {
+						Toast.makeText(getApplicationContext(),
+								"No recorded path found.", Toast.LENGTH_SHORT)
+								.show();
+					}
+
+				} else {
+					notifyToEnterPathName();
+				}
+			}
+		});
+
+		uploadFile = (Button) findViewById(R.id.uploadBtn);
+		uploadFile.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				TextView pathNameField = (TextView) findViewById(R.id.SaveFileTxtField);
+				String pathName = pathNameField.getText().toString();
+				if (pathName != null && !pathName.isEmpty()) {
+					File csvFolder = new File(Environment
+							.getExternalStorageDirectory(), "PeerMap");
+					File csvFile = new File(csvFolder, "path" + ".csv");
+					if (csvFile.exists()) {
+						UploadFileToDropbox upload = new UploadFileToDropbox(
+								getApplicationContext(), dropbox, FILE_DIR,
+								pathName);
+						upload.execute();
+					} else {
+						Toast.makeText(getApplicationContext(),
+								"No recorded path found.", Toast.LENGTH_SHORT)
+								.show();
+					}
 				} else {
 					notifyToEnterPathName();
 				}
@@ -166,11 +205,11 @@ public class MainActivity extends Activity {
 		super.onResume();
 
 		AndroidAuthSession session = dropbox.getSession();
-		
-		if(session.isLinked()){
+
+		if (session.isLinked()) {
 			loggedIn(true);
 		}
-		
+
 		if (session.authenticationSuccessful()) {
 			try {
 				session.finishAuthentication();
@@ -226,12 +265,81 @@ public class MainActivity extends Activity {
 
 	public void loggedIn(boolean isLogged) {
 		isLoggedIn = isLogged;
-		saveFile.setEnabled(isLogged);
+		uploadFile.setEnabled(isLogged);
 		logIn.setText(isLogged ? R.string.CloudLogout : R.string.CloudLogin);
 	}
 
 	public void notifyToEnterPathName() {
 		Toast.makeText(this, "Enter a path name.", Toast.LENGTH_SHORT).show();
+	}
+
+	private class SavePathToSD extends AsyncTask<String, Integer, Boolean> {
+
+		private Activity activity;
+
+		public SavePathToSD(Activity activity) {
+			System.out.println("here");
+			this.activity = activity;
+		}
+
+		protected void onPreExecute() {
+			Toast.makeText(activity.getApplicationContext(), "Saving path",
+					Toast.LENGTH_SHORT).show();
+		}
+
+		@Override
+		protected void onPostExecute(Boolean success) {
+			if (success) {
+				Toast.makeText(activity.getApplicationContext(),
+						"Done saving path", Toast.LENGTH_SHORT).show();
+			} else {
+				Toast.makeText(activity.getApplicationContext(),
+						"Error saving path", Toast.LENGTH_SHORT).show();
+			}
+		}
+
+		@Override
+		protected Boolean doInBackground(String... params) {
+			return saveToSD();
+		}
+
+		public boolean saveToSD() {
+
+			try {
+				// get recorded Path
+				File csvFolder = new File(
+						Environment.getExternalStorageDirectory(), "PeerMap");
+				File csvFile = new File(csvFolder, "path" + ".csv");
+
+				File csvSaveFolder = new File(
+						Environment.getExternalStorageDirectory(),
+						"PeerMap/SavedPaths");
+
+				if (!csvSaveFolder.exists()) {
+					csvSaveFolder.mkdirs();
+				}
+
+				TextView pathNameField = (TextView) findViewById(R.id.SaveFileTxtField);
+				String pathName = pathNameField.getText().toString();
+				File csvSaveFile = new File(csvSaveFolder, pathName + ".csv");
+				if (!csvSaveFile.exists()) {
+					csvSaveFile.createNewFile();
+				}
+
+				FileInputStream inStream = new FileInputStream(csvFile);
+				FileOutputStream outStream = new FileOutputStream(csvSaveFile);
+				FileChannel inChannel = inStream.getChannel();
+				FileChannel outChannel = outStream.getChannel();
+				inChannel.transferTo(0, inChannel.size(), outChannel);
+				inStream.close();
+				outStream.close();
+				return true;
+			} catch (Exception e) {
+				e.printStackTrace();
+				return false;
+			}
+		}
+
 	}
 
 }

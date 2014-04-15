@@ -14,21 +14,13 @@
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
         android:layout_alignParentTop="true"
+        android:layout_toLeftOf="@+id/saveBtn"
         android:ems="10"
         android:hint="@string/SaveFileHint"
         android:inputType="text" >
 
         <requestFocus />
     </EditText>
-
-    <Button
-        android:id="@+id/saveBtn"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignBaseline="@+id/SaveFileTxtField"
-        android:layout_alignBottom="@+id/SaveFileTxtField"
-        android:layout_toRightOf="@+id/SaveFileTxtField"
-        android:text="@string/SaveBtnTxt" />
 
     <Button
         android:id="@+id/choosePathBtn_Home"
@@ -51,12 +43,30 @@
         android:textOn="@string/RecordBtnTxt_On" />
 
     <Button
+        android:id="@+id/uploadBtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/cloudLogBtn"
+        android:layout_alignRight="@+id/saveBtn"
+        android:layout_below="@id/SaveFileTxtField"
+        android:text="@string/UploadBtnTxt" />
+
+    <Button
+        android:id="@+id/saveBtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@+id/SaveFileTxtField"
+        android:layout_alignBottom="@+id/SaveFileTxtField"
+        android:layout_alignParentRight="true"
+        android:text="@string/SaveBtnTxt" />
+
+    <Button
         android:id="@+id/cloudLogBtn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignLeft="@+id/SaveFileTxtField"
         android:layout_alignRight="@+id/saveBtn"
-        android:layout_below="@+id/SaveFileTxtField"
-        android:text="@string/emptyString" />
+        android:layout_below="@+id/uploadBtn"
+        android:text="@string/CloudDefault" />
 
 </RelativeLayout>
