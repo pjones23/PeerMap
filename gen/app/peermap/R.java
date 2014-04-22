@@ -31,7 +31,7 @@ public final class R {
         public static final int RelativeLayout1=0x7f08000e;
         public static final int SaveFileTxtField=0x7f080008;
         public static final int SearchPeerBtn=0x7f080003;
-        public static final int action_settings=0x7f08001a;
+        public static final int action_settings=0x7f08001c;
         public static final int choosePathBtn_Home=0x7f08000a;
         public static final int choosePathBtn_Path=0x7f08000f;
         public static final int chosenPathTxt=0x7f080018;
@@ -46,11 +46,13 @@ public final class R {
         public static final int download_file=0x7f080006;
         public static final int dropbox_login=0x7f080004;
         public static final int editText1=0x7f080000;
+        public static final int errorFileTxt=0x7f08001a;
+        public static final int errorTxt=0x7f080019;
         public static final int goHomeBtn=0x7f080010;
         public static final int imageViewCompass=0x7f080016;
         public static final int recordBtn=0x7f08000b;
         public static final int saveBtn=0x7f080009;
-        public static final int simple_list_item=0x7f080019;
+        public static final int simple_list_item=0x7f08001b;
         public static final int uploadBtn=0x7f08000c;
         public static final int upload_file=0x7f080005;
     }
@@ -59,7 +61,8 @@ public final class R {
         public static final int activity_dropbox=0x7f030001;
         public static final int activity_main=0x7f030002;
         public static final int activity_path=0x7f030003;
-        public static final int simple_list_item=0x7f030004;
+        public static final int error=0x7f030004;
+        public static final int simple_list_item=0x7f030005;
     }
     public static final class menu {
         public static final int main=0x7f070000;
@@ -72,8 +75,10 @@ public final class R {
         public static final int CompassTxtLabel=0x7f05000d;
         public static final int DirectionTxtLabel=0x7f05000c;
         public static final int DistanceTxtLabel=0x7f05000e;
+        public static final int EmptyPathTxt=0x7f050016;
         public static final int GatheringLocationTxt=0x7f050014;
         public static final int GoHomeBtnTxt=0x7f050008;
+        public static final int InvalidFileTxt=0x7f050015;
         public static final int PeerHelpBtn=0x7f050013;
         public static final int RecordBtnTxt_Off=0x7f05000a;
         public static final int RecordBtnTxt_On=0x7f050009;

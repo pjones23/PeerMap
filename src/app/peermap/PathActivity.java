@@ -40,6 +40,8 @@ public class PathActivity extends Activity {
 	private String directionToStr;
 	// record the compass picture angle turned
 	private float currentDegree = 0f;
+	
+	private boolean validPath; 
 
 	private static final int THREE_SECONDS = 3000;
 	private static final int TWO_METERS = 2;
@@ -65,11 +67,23 @@ public class PathActivity extends Activity {
 		minDistance = 0;
 		directionToStr = "";
 		
+		validPath = true;
+		
 		//Get path
 		Intent pathIntent = getIntent();
 		String pathName = pathIntent.getStringExtra("pathName");
 		TextView chosenPathTextView = (TextView) findViewById(R.id.chosenPathTxt);
 		chosenPathTextView.setText(pathName);
+		
+		if(pathName == null || pathName.isEmpty() || !(pathName.endsWith(".csv"))){
+			validPath = false;
+			setContentView(R.layout.error);
+			TextView errorTxt = (TextView) findViewById(R.id.errorTxt);
+			errorTxt.setText(R.string.InvalidFileTxt);
+			TextView errorFileTxt = (TextView) findViewById(R.id.errorFileTxt);
+			errorFileTxt.setText(pathName);
+			return;
+		}
 
 		// Create route array from csv file
 		// Read file
@@ -108,6 +122,15 @@ public class PathActivity extends Activity {
 			System.out.println("Lat: " + loc.getLatitude() + ", Long: "
 					+ loc.getLongitude());
 		}
+		
+		if(routePoints == null || routePoints.isEmpty()){
+			validPath = false;
+			setContentView(R.layout.error);
+			TextView errorTxt = (TextView) findViewById(R.id.errorTxt);
+			errorTxt.setText(R.string.EmptyPathTxt);
+			TextView errorFileTxt = (TextView) findViewById(R.id.errorFileTxt);
+			errorFileTxt.setText(pathName);
+		}
 
 	}
 
@@ -115,17 +138,19 @@ public class PathActivity extends Activity {
 	protected void onResume() {
 		super.onResume();
 		System.out.println("Resuming!!!");
-		// for the system's orientation sensor registered listeners
-		mSensorManager.registerListener(mSensorListener, accelerometer,
-				SensorManager.SENSOR_DELAY_UI);
-		mSensorManager.registerListener(mSensorListener, magnetometer,
-				SensorManager.SENSOR_DELAY_UI);
 
-		startUpdates();
+		if (validPath) {
+			// for the system's orientation sensor registered listeners
+			mSensorManager.registerListener(mSensorListener, accelerometer,
+					SensorManager.SENSOR_DELAY_UI);
+			mSensorManager.registerListener(mSensorListener, magnetometer,
+					SensorManager.SENSOR_DELAY_UI);
 
-		currentLocation = mLocationManager
-				.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+			startUpdates();
 
+			currentLocation = mLocationManager
+					.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+		}
 	}
 
 	public void getClosetPoint() {

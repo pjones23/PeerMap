@@ -24,10 +24,12 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
+import android.location.LocationManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.AdapterView;
@@ -54,6 +56,8 @@ public class ChoosePathActivity extends Activity {
 
 	private ArrayAdapter<String> pathListViewAdapter;
 	private ListView pathListView;
+	
+	private LocationManager gpsLocationManager;
 
 	/** Called when the activity is first created. */
 	@SuppressWarnings("deprecation")
@@ -172,12 +176,28 @@ public class ChoosePathActivity extends Activity {
 					download.execute();
 
 				} else {
-					// start Path activity
-					Intent pathIntent = new Intent(getApplicationContext(), PathActivity.class);
-					pathIntent.putExtra("pathName", chosenPath);
-					startActivity(pathIntent);					
-				}
+					// Check if GPS is enabled
+					gpsLocationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+					boolean gpsEnabled = gpsLocationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
 
+					// If not, prompt user to enable GPS
+					if (!gpsEnabled) {
+						// If GPS is not enabled
+
+						Toast toast = Toast.makeText(getApplicationContext(),
+								"GPS not available", Toast.LENGTH_SHORT);
+						toast.setGravity(Gravity.CENTER, 0, 0);
+						toast.show();
+
+						// Create alert dialog here
+						enableLocationSettings();
+					} else {
+						// start Path activity
+						Intent pathIntent = new Intent(getApplicationContext(), PathActivity.class);
+						pathIntent.putExtra("pathName", chosenPath);
+						startActivity(pathIntent);
+					}									
+				}
 			}
 
 		});
@@ -211,6 +231,13 @@ public class ChoosePathActivity extends Activity {
 		allPaths.addAll(storedPathNames);
 		allPaths.addAll(cloudPathNames);
 		pathListViewAdapter.notifyDataSetChanged();
+	}
+	
+	private void enableLocationSettings() {
+		Intent settingsIntent = new Intent(
+				android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+		settingsIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+		startActivity(settingsIntent);
 	}
 
 	private class CloudFiles extends AsyncTask<String, Integer, Boolean> {

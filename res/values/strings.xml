@@ -22,4 +22,6 @@
     <string name="CloudLogout">Log out of cloud</string>
     <string name="PeerHelpBtn">Peer help</string>
     <string name="GatheringLocationTxt">Obtaining Current Location</string>
+    <string name="InvalidFileTxt">Invalid path file type!</string>
+    <string name="EmptyPathTxt">Empty path!</string>
 </resources>
