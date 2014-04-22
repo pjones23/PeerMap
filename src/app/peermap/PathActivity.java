@@ -193,15 +193,6 @@ public class PathActivity extends Activity {
 
 	}
 
-	/*
-	 * private String displayRoutePoints() {
-	 * 
-	 * String res = "";
-	 * 
-	 * for (Location loc : routePoints) { res += loc.toString() + "  " +
-	 * loc.getBearing() + "  " + "\n"; } return res; }
-	 */
-
 	@Override
 	public void onDestroy() {
 		super.onDestroy();
@@ -209,6 +200,7 @@ public class PathActivity extends Activity {
 		System.out.println("Stopping GPS poll");
 
 		mSensorManager.unregisterListener(mSensorListener);
+		mLocationManager.removeUpdates(mLocationListener);
 
 		// close csv file
 		// write the location to the cvs file
