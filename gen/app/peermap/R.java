@@ -31,9 +31,10 @@ public final class R {
         public static final int RelativeLayout1=0x7f08000e;
         public static final int SaveFileTxtField=0x7f080008;
         public static final int SearchPeerBtn=0x7f080003;
-        public static final int action_settings=0x7f080019;
+        public static final int action_settings=0x7f08001a;
         public static final int choosePathBtn_Home=0x7f08000a;
         public static final int choosePathBtn_Path=0x7f08000f;
+        public static final int chosenPathTxt=0x7f080018;
         public static final int cloudLogBtn=0x7f08000d;
         public static final int compassLbl=0x7f080015;
         public static final int compassTxtField=0x7f080017;
@@ -49,7 +50,7 @@ public final class R {
         public static final int imageViewCompass=0x7f080016;
         public static final int recordBtn=0x7f08000b;
         public static final int saveBtn=0x7f080009;
-        public static final int simple_list_item=0x7f080018;
+        public static final int simple_list_item=0x7f080019;
         public static final int uploadBtn=0x7f08000c;
         public static final int upload_file=0x7f080005;
     }

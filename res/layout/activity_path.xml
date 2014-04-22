@@ -131,4 +131,12 @@
         android:text="@string/emptyString"
         android:textAppearance="?android:attr/textAppearanceLarge" />
 
+    <TextView
+        android:id="@+id/chosenPathTxt"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_below="@+id/choosePathBtn_Path"
+        android:text="@string/emptyString" />
+
 </RelativeLayout>

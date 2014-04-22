@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
@@ -63,13 +64,19 @@ public class PathActivity extends Activity {
 		closestPoint = null;
 		minDistance = 0;
 		directionToStr = "";
+		
+		//Get path
+		Intent pathIntent = getIntent();
+		String pathName = pathIntent.getStringExtra("pathName");
+		TextView chosenPathTextView = (TextView) findViewById(R.id.chosenPathTxt);
+		chosenPathTextView.setText(pathName);
 
 		// Create route array from csv file
 		// Read file
 		try {
 			// static file location for my testing File
 			File csvFile = new File("/storage/emulated/0/PeerMap/SavedPaths",
-					"path" + ".csv");
+					pathName);
 			reader = new CSVReader(new FileReader(csvFile), ';');
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
