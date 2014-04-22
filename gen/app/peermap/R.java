@@ -72,6 +72,7 @@ public final class R {
         public static final int CompassTxtLabel=0x7f05000d;
         public static final int DirectionTxtLabel=0x7f05000c;
         public static final int DistanceTxtLabel=0x7f05000e;
+        public static final int GatheringLocationTxt=0x7f050014;
         public static final int GoHomeBtnTxt=0x7f050008;
         public static final int PeerHelpBtn=0x7f050013;
         public static final int RecordBtnTxt_Off=0x7f05000a;
