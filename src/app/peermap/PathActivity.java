@@ -28,7 +28,8 @@ import au.com.bytecode.opencsv.CSVReader;
 
 public class PathActivity extends Activity {
 
-	private LocationManager mLocationManager;
+	private LocationManager mGPSLocationManager;
+	private LocationManager mNetworkLocationManager;
 	private SensorManager mSensorManager;
 	private Sensor accelerometer;
 	private Sensor magnetometer;
@@ -45,6 +46,7 @@ public class PathActivity extends Activity {
 
 	private static final int THREE_SECONDS = 3000;
 	private static final int TWO_METERS = 2;
+	private static final int TWO_MINUTES = 1000 * 60 * 2;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -53,7 +55,8 @@ public class PathActivity extends Activity {
 
 		routePoints = new ArrayList<Location>();
 
-		mLocationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
+		mGPSLocationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
+		mNetworkLocationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
 		mSensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
 		accelerometer = mSensorManager
 				.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
@@ -148,8 +151,7 @@ public class PathActivity extends Activity {
 
 			startUpdates();
 
-			currentLocation = mLocationManager
-					.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+			getCurrentLocation();
 		}
 	}
 
@@ -200,7 +202,8 @@ public class PathActivity extends Activity {
 		System.out.println("Stopping GPS poll");
 
 		mSensorManager.unregisterListener(mSensorListener);
-		mLocationManager.removeUpdates(mLocationListener);
+		mGPSLocationManager.removeUpdates(mLocationListener);
+		mNetworkLocationManager.removeUpdates(mLocationListener);
 
 		// close csv file
 		// write the location to the cvs file
@@ -228,7 +231,7 @@ public class PathActivity extends Activity {
 		@Override
 		public void onLocationChanged(Location location) {
 			// update current location
-			currentLocation = location;
+			getCurrentLocation();
 
 			// update closest point
 			Log.i("GPS Location Change", "Updating closest point");
@@ -267,21 +270,37 @@ public class PathActivity extends Activity {
 	};
 
 	public void startUpdates() {
-		boolean gpsEnabled = this.mLocationManager
-				.isProviderEnabled(LocationManager.GPS_PROVIDER);
+		boolean gpsEnabled = this.mGPSLocationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
 
 		// check if the GPS was enabled
 		if (gpsEnabled) {
 			// Get gps location if GPS is enabled
-			this.mLocationManager.requestLocationUpdates(
+			this.mGPSLocationManager.requestLocationUpdates(
 					LocationManager.GPS_PROVIDER, THREE_SECONDS, TWO_METERS,
 					mLocationListener);
 		}
+		boolean networkEnabled = this.mGPSLocationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
+
+		// check if the GPS was enabled
+		if (networkEnabled) {
+			// Get gps location if GPS is enabled
+			this.mNetworkLocationManager.requestLocationUpdates(
+					LocationManager.NETWORK_PROVIDER, THREE_SECONDS, TWO_METERS,
+					mLocationListener);
+		}
+		 if(!gpsEnabled && !networkEnabled){
+			 Toast toast = Toast.makeText(getApplicationContext(),
+						"No GPS or network location assistance available. Try again.",
+						Toast.LENGTH_LONG);
+				toast.setGravity(Gravity.CENTER, 0, 0);
+				toast.show();
+		 }
 	}
 
 	// Stop receiving location updates whenever the Activity becomes invisible.
 	protected void stopUpdates() {
-		this.mLocationManager.removeUpdates(mLocationListener);
+		this.mGPSLocationManager.removeUpdates(mLocationListener);
+		this.mNetworkLocationManager.removeUpdates(mLocationListener);
 
 	}
 
@@ -390,5 +409,92 @@ public class PathActivity extends Activity {
 		
 		return direction;
 	}
+	
+	public void getCurrentLocation() {
+
+		Location newGPSLoc = mGPSLocationManager
+				.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+		Location newNETLoc = mNetworkLocationManager
+				.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
+
+		Location bestLoc;
+		if (newGPSLoc == null) {
+			bestLoc = newNETLoc;
+			System.out.println("newNETLoc: " + newNETLoc.getLatitude() + ", "
+					+ newNETLoc.getLongitude());
+
+		} else {
+			bestLoc = getBetterLocation(newNETLoc, newGPSLoc);
+			System.out.println("newGPSLoc: " + newGPSLoc.getLatitude() + ", "
+					+ newGPSLoc.getLongitude());
+			System.out.println("newNETLoc: " + newNETLoc.getLatitude() + ", "
+					+ newNETLoc.getLongitude());
+
+		}
+
+		System.out.println("bestLoc: " + bestLoc.getLatitude() + ", "
+				+ bestLoc.getLongitude());
+		currentLocation = bestLoc;
+	}
+
+	/** Determines whether one Location reading is better than the current Location fix.
+     * Code taken from
+     * http://developer.android.com/guide/topics/location/obtaining-user-location.html
+     *
+     * @param newLocation  The new Location that you want to evaluate
+     * @param currentBestLocation  The current Location fix, to which you want to compare the new
+     *        one
+     * @return The better Location object based on recency and accuracy.
+     */
+   protected Location getBetterLocation(Location newLocation, Location currentBestLocation) {
+       if (currentBestLocation == null) {
+           // A new location is always better than no location
+           return newLocation;
+       }
+
+       // Check whether the new location fix is newer or older
+       long timeDelta = newLocation.getTime() - currentBestLocation.getTime();
+       boolean isSignificantlyNewer = timeDelta > TWO_MINUTES;
+       boolean isSignificantlyOlder = timeDelta < -TWO_MINUTES;
+       boolean isNewer = timeDelta > 0;
+
+       // If it's been more than two minutes since the current location, use the new location
+       // because the user has likely moved.
+       if (isSignificantlyNewer) {
+           return newLocation;
+       // If the new location is more than two minutes older, it must be worse
+       } else if (isSignificantlyOlder) {
+           return currentBestLocation;
+       }
+
+       // Check whether the new location fix is more or less accurate
+       int accuracyDelta = (int) (newLocation.getAccuracy() - currentBestLocation.getAccuracy());
+       boolean isLessAccurate = accuracyDelta > 0;
+       boolean isMoreAccurate = accuracyDelta < 0;
+       boolean isSignificantlyLessAccurate = accuracyDelta > 200;
+
+       // Check if the old and new location are from the same provider
+       boolean isFromSameProvider = isSameProvider(newLocation.getProvider(),
+               currentBestLocation.getProvider());
+
+       // Determine location quality using a combination of timeliness and accuracy
+       if (isMoreAccurate) {
+           return newLocation;
+       } else if (isNewer && !isLessAccurate) {
+           return newLocation;
+       } else if (isNewer && !isSignificantlyLessAccurate && isFromSameProvider) {
+           return newLocation;
+       }
+       return currentBestLocation;
+   }
+   
+   
+   /** Checks whether two providers are the same */
+   private boolean isSameProvider(String provider1, String provider2) {
+       if (provider1 == null) {
+         return provider2 == null;
+       }
+       return provider1.equals(provider2);
+   }
 
 }
