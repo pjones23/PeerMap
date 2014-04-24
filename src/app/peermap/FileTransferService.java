@@ -8,7 +8,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.util.Log;
-import android.widget.Toast;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -46,13 +45,13 @@ public class FileTransferService extends IntentService {
 
         Context context = getApplicationContext();
         if (intent.getAction().equals(ACTION_SEND_FILE)) {
-        	Toast.makeText(getApplicationContext(),
-					"sending", Toast.LENGTH_SHORT)
-					.show();
+        	
             String fileUri = intent.getExtras().getString(EXTRAS_FILE_PATH);
             String host = intent.getExtras().getString(EXTRAS_GROUP_OWNER_ADDRESS);
             Socket socket = new Socket();
             int port = intent.getExtras().getInt(EXTRAS_GROUP_OWNER_PORT);
+            
+            Log.i(WiFiDirectActivity.TAG, "sending " + fileUri);
 
             try {
                 Log.d(WiFiDirectActivity.TAG, "Opening client socket - ");
@@ -68,7 +67,9 @@ public class FileTransferService extends IntentService {
                 } catch (FileNotFoundException e) {
                     Log.d(WiFiDirectActivity.TAG, e.toString());
                 }
-                DeviceDetailFragment.copyFile(is, stream);
+                Log.d(WiFiDirectActivity.TAG, "1");
+                DeviceDetailFragment.copyFileName = fileUri;
+                DeviceDetailFragment.copyFile(is, stream, fileUri);
                 Log.d(WiFiDirectActivity.TAG, "Client: Data written");
             } catch (IOException e) {
                 Log.e(WiFiDirectActivity.TAG, e.getMessage());

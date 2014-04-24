@@ -56,6 +56,9 @@ public class DeviceDetailFragment extends Fragment implements ConnectionInfoList
     private WifiP2pDevice device;
     private WifiP2pInfo info;
     ProgressDialog progressDialog = null;
+    
+    public static String copyFileName;
+
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
@@ -112,6 +115,7 @@ public class DeviceDetailFragment extends Fragment implements ConnectionInfoList
                         startActivityForResult(intent, CHOOSE_FILE_RESULT_CODE);
                     }
                 });
+        
 
         return mContentView;
     }
@@ -225,10 +229,13 @@ public class DeviceDetailFragment extends Fragment implements ConnectionInfoList
                 Log.d(WiFiDirectActivity.TAG, "Server: Socket opened");
                 Socket client = serverSocket.accept();
                 Log.d(WiFiDirectActivity.TAG, "Server: connection done");
-             // Transfer saved file to sd card
+             
+                Log.d(WiFiDirectActivity.TAG, "2");
+                Log.d(WiFiDirectActivity.TAG, "file: " + copyFileName);
+                // Transfer saved file to sd card
 				File csvFolder = new File(Environment
-						.getExternalStorageDirectory(), "PeerMap");
-				File csvFile = new File(csvFolder, "path" + ".csv");
+						.getExternalStorageDirectory(), "PeerMap/SavedPaths");
+				File csvFile = new File(csvFolder, "p2p" + ".csv");
                 
                 if (!csvFolder.exists())
                 	csvFolder.mkdirs();
@@ -236,7 +243,7 @@ public class DeviceDetailFragment extends Fragment implements ConnectionInfoList
 
                 Log.d(WiFiDirectActivity.TAG, "server: copying files " + csvFile.toString());
                 InputStream inputstream = client.getInputStream();
-                copyFile(inputstream, new FileOutputStream(csvFile));
+                copyFile(inputstream, new FileOutputStream(csvFile), copyFileName);
                 serverSocket.close();
                 return csvFile.getAbsolutePath();
             } catch (IOException e) {
@@ -268,8 +275,12 @@ public class DeviceDetailFragment extends Fragment implements ConnectionInfoList
 
     }
 
-    public static boolean copyFile(InputStream inputStream, OutputStream out) {
-        byte buf[] = new byte[1024];
+    public static boolean copyFile(InputStream inputStream, OutputStream out, String fileName) {
+        
+    	copyFileName = fileName;
+    	Log.d(WiFiDirectActivity.TAG, "3");
+    	Log.d(WiFiDirectActivity.TAG, "file: " + copyFileName);
+    	byte buf[] = new byte[1024];
         int len;
         try {
             while ((len = inputStream.read(buf)) != -1) {
