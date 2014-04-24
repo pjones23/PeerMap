@@ -49,6 +49,7 @@ public class ChoosePathActivity extends Activity {
 	private final static String ACCESS_SECRET = "xz7yev2wz07ycmx";
 	private boolean isLoggedIn;
 	private Button logIn;
+	private Button peerBtn;
 
 	private ArrayList<String> storedPathNames;
 	private ArrayList<String> cloudPathNames;
@@ -104,6 +105,16 @@ public class ChoosePathActivity extends Activity {
 					dropbox.getSession().startAuthentication(
 							ChoosePathActivity.this);
 				}
+			}
+		});
+		
+		peerBtn = (Button) findViewById(R.id.SearchPeerBtn);
+		peerBtn.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				// start the Wifi P2P
+				startWifiDirect();
 			}
 		});
 	}
@@ -238,6 +249,11 @@ public class ChoosePathActivity extends Activity {
 				android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS);
 		settingsIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 		startActivity(settingsIntent);
+	}
+	
+	private void startWifiDirect(){
+		Intent startP2P = new Intent(getApplicationContext(), WiFiDirectActivity.class);
+		startActivity(startP2P);
 	}
 
 	private class CloudFiles extends AsyncTask<String, Integer, Boolean> {

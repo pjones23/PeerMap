@@ -34,7 +34,7 @@
         android:id="@+id/CloudLogBtn_Choose_Path"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/emptyString" />
+        android:text="@string/CloudDefault" />
 
     <Button
         android:id="@+id/SearchPeerBtn"

@@ -69,16 +69,17 @@ public class PathActivity extends Activity {
 		closestPoint = null;
 		minDistance = 0;
 		directionToStr = "";
-		
+
 		validPath = true;
-		
-		//Get path
+
+		// Get path
 		Intent pathIntent = getIntent();
 		String pathName = pathIntent.getStringExtra("pathName");
 		TextView chosenPathTextView = (TextView) findViewById(R.id.chosenPathTxt);
 		chosenPathTextView.setText(pathName);
-		
-		if(pathName == null || pathName.isEmpty() || !(pathName.endsWith(".csv"))){
+
+		if (pathName == null || pathName.isEmpty()
+				|| !(pathName.endsWith(".csv"))) {
 			validPath = false;
 			setContentView(R.layout.error);
 			TextView errorTxt = (TextView) findViewById(R.id.errorTxt);
@@ -102,20 +103,29 @@ public class PathActivity extends Activity {
 		Log.e("LOG", "file read"); // Parse csv and store into array list
 		String[] nextLine;
 		try {
-			while ((nextLine = reader.readNext()) != null) { // nextLine[] is an
-																// array of
-																// values from
-																// the line
-																// String[]
-				String[] parts = nextLine[0].split(";");
+			// This check is necessary for only certain versions of android
+			// It was found when testing on a separate device
+			if (reader == null) {
+				Log.e("LOG", "null reader object");
+			}
+			if (reader != null) {
+				while ((nextLine = reader.readNext()) != null) { // nextLine[]
+																	// is an
+																	// array of
+																	// values
+																	// from
+																	// the line
+																	// String[]
+					String[] parts = nextLine[0].split(";");
 
-				Log.i("Latitude", parts[0]);
-				Log.i("Longitude", parts[1]);
+					Log.i("Latitude", parts[0]);
+					Log.i("Longitude", parts[1]);
 
-				Location l = new Location(LocationManager.GPS_PROVIDER);
-				l.setLatitude(Double.parseDouble(parts[0]));
-				l.setLongitude(Double.parseDouble(parts[1]));
-				routePoints.add(l);
+					Location l = new Location(LocationManager.GPS_PROVIDER);
+					l.setLatitude(Double.parseDouble(parts[0]));
+					l.setLongitude(Double.parseDouble(parts[1]));
+					routePoints.add(l);
+				}
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -125,8 +135,8 @@ public class PathActivity extends Activity {
 			System.out.println("Lat: " + loc.getLatitude() + ", Long: "
 					+ loc.getLongitude());
 		}
-		
-		if(routePoints == null || routePoints.isEmpty()){
+
+		if (routePoints == null || routePoints.isEmpty()) {
 			validPath = false;
 			setContentView(R.layout.error);
 			TextView errorTxt = (TextView) findViewById(R.id.errorTxt);
