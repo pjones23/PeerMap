@@ -1,0 +1,72 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    tools:context=".MainActivity" >
+
+    <EditText
+        android:id="@+id/SaveFileTxtField"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:layout_toLeftOf="@+id/saveBtn"
+        android:ems="10"
+        android:hint="@string/SaveFileHint"
+        android:inputType="text" >
+
+        <requestFocus />
+    </EditText>
+
+    <Button
+        android:id="@+id/choosePathBtn_Home"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/SaveFileTxtField"
+        android:layout_alignParentBottom="true"
+        android:layout_alignRight="@+id/saveBtn"
+        android:layout_marginBottom="39dp"
+        android:text="@string/ChoosePathBtnTxt" />
+
+    <ToggleButton
+        android:id="@+id/recordBtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/choosePathBtn_Home"
+        android:layout_alignRight="@+id/choosePathBtn_Home"
+        android:layout_centerVertical="true"
+        android:textOff="@string/RecordBtnTxt_Off"
+        android:textOn="@string/RecordBtnTxt_On" />
+
+    <Button
+        android:id="@+id/uploadBtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/cloudLogBtn"
+        android:layout_alignRight="@+id/saveBtn"
+        android:layout_below="@id/SaveFileTxtField"
+        android:text="@string/UploadBtnTxt" />
+
+    <Button
+        android:id="@+id/saveBtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@+id/SaveFileTxtField"
+        android:layout_alignBottom="@+id/SaveFileTxtField"
+        android:layout_alignParentRight="true"
+        android:text="@string/SaveBtnTxt" />
+
+    <Button
+        android:id="@+id/cloudLogBtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/SaveFileTxtField"
+        android:layout_alignRight="@+id/saveBtn"
+        android:layout_below="@+id/uploadBtn"
+        android:text="@string/CloudDefault" />
+
+</RelativeLayout>
