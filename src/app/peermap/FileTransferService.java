@@ -15,6 +15,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.InetSocketAddress;
 import java.net.Socket;
+import java.util.concurrent.TimeUnit;
 
 /**
  * A service that process each file transfer request i.e Intent by opening a
@@ -52,6 +53,7 @@ public class FileTransferService extends IntentService {
             int port = intent.getExtras().getInt(EXTRAS_GROUP_OWNER_PORT);
             
             Log.i(WiFiDirectActivity.TAG, "sending " + fileUri);
+            long startTime = System.nanoTime();
 
             try {
                 Log.d(WiFiDirectActivity.TAG, "Opening client socket - ");
@@ -84,6 +86,10 @@ public class FileTransferService extends IntentService {
                         }
                     }
                 }
+                long endTime = System.nanoTime();
+                long delta = endTime - startTime;
+        		Log.i("P2P Send Timer", Long.toString(TimeUnit.MILLISECONDS.convert(delta, TimeUnit.NANOSECONDS)));
+
             }
 
         }

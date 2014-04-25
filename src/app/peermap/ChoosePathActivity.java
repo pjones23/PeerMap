@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import com.dropbox.client2.DropboxAPI;
 import com.dropbox.client2.DropboxAPI.DropboxFileInfo;
@@ -259,19 +260,31 @@ public class ChoosePathActivity extends Activity {
 	private class CloudFiles extends AsyncTask<String, Integer, Boolean> {
 
 		private Activity activity;
+		
+		private long startTime;
+		private long endTime;
 
 		public CloudFiles(Activity activity) {
 			System.out.println("here");
 			this.activity = activity;
+			
+			startTime = 0;
+			endTime = 0;
 		}
 
 		protected void onPreExecute() {
+			startTime = System.nanoTime();
 			Toast.makeText(activity.getApplicationContext(),
 					"Reading cloud files", Toast.LENGTH_SHORT).show();
 		}
 
 		@Override
 		protected void onPostExecute(Boolean success) {
+			
+			endTime = System.nanoTime();
+			long delta = endTime - startTime;
+			Log.i("Read Cloud Files Timer", Long.toString(TimeUnit.MILLISECONDS.convert(delta, TimeUnit.NANOSECONDS)));
+			
 			if (success) {
 				updateAllPaths();
 				Toast.makeText(activity.getApplicationContext(),
@@ -325,6 +338,9 @@ public class ChoosePathActivity extends Activity {
 		private String path;
 		private String fileName;
 		private Context context;
+		
+		private long startTime;
+		private long endTime;
 
 		public DownloadCloudFile(Context context, DropboxAPI<?> dropbox,
 				String path, String fileName) {
@@ -332,9 +348,13 @@ public class ChoosePathActivity extends Activity {
 			this.dropbox = dropbox;
 			this.path = path;
 			this.fileName = fileName;
+			
+			startTime = 0;
+			endTime = 0;
 		}
 
 		protected void onPreExecute() {
+			startTime = System.nanoTime();
 			Toast.makeText(context,
 					"Downloading " + fileName, Toast.LENGTH_SHORT).show();
 		}
@@ -371,6 +391,11 @@ public class ChoosePathActivity extends Activity {
 		}
 
 		protected void onPostExecute(Boolean result) {
+			
+			endTime = System.nanoTime();
+			long delta = endTime - startTime;
+			Log.i("Cloud Download Timer", Long.toString(TimeUnit.MILLISECONDS.convert(delta, TimeUnit.NANOSECONDS)));
+			
 			if (result) {
 				getStoredFiles();
 				updateAllPaths();

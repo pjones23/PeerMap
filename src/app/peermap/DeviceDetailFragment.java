@@ -34,7 +34,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-
 import app.peermap.DeviceListFragment.DeviceActionListener;
 
 import java.io.File;
@@ -44,6 +43,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.concurrent.TimeUnit;
 
 /**
  * A fragment that manages a particular peer and allows interaction with device
@@ -76,6 +76,7 @@ public class DeviceDetailFragment extends Fragment implements ConnectionInfoList
                 WifiP2pConfig config = new WifiP2pConfig();
                 config.deviceAddress = device.deviceAddress;
                 config.wps.setup = WpsInfo.PBC;
+                config.groupOwnerIntent = 15;
                 if (progressDialog != null && progressDialog.isShowing()) {
                     progressDialog.dismiss();
                 }
@@ -213,6 +214,9 @@ public class DeviceDetailFragment extends Fragment implements ConnectionInfoList
     public static class FileServerAsyncTask extends AsyncTask<Void, Void, String> {
 
         private TextView statusText;
+        
+        private long startTime;
+    	private long endTime;
 
         /**
          * @param context
@@ -220,6 +224,9 @@ public class DeviceDetailFragment extends Fragment implements ConnectionInfoList
          */
         public FileServerAsyncTask(Context context, View statusText) {
             this.statusText = (TextView) statusText;
+            
+            startTime = 0;
+    		endTime = 0;
         }
 
         @Override
@@ -230,6 +237,7 @@ public class DeviceDetailFragment extends Fragment implements ConnectionInfoList
                 Socket client = serverSocket.accept();
                 Log.d(WiFiDirectActivity.TAG, "Server: connection done");
              
+                startTime = System.nanoTime();
                 Log.d(WiFiDirectActivity.TAG, "2");
                 Log.d(WiFiDirectActivity.TAG, "file: " + copyFileName);
                 // Transfer saved file to sd card
@@ -258,6 +266,10 @@ public class DeviceDetailFragment extends Fragment implements ConnectionInfoList
          */
         @Override
         protected void onPostExecute(String result) {
+        	endTime = System.nanoTime();
+    		long delta = endTime - startTime;
+    		Log.i("Recieve P2P Timer", Long.toString(TimeUnit.MILLISECONDS.convert(delta, TimeUnit.NANOSECONDS)));
+    		
             if (result != null) {
                 statusText.setText("File copied - " + result);
             }
